@@ -1,0 +1,4 @@
+<!-- "values-night" = used automatically when the phone is in dark mode. -->
+<resources>
+    <style name="Theme.WeeklySchedule" parent="android:Theme.Material.NoActionBar" />
+</resources>

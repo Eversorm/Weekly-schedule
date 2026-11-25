@@ -1,0 +1,4 @@
+<!-- Only used for the split second before Compose draws the screen (window background). -->
+<resources>
+    <style name="Theme.WeeklySchedule" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

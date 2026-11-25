@@ -1,0 +1,13 @@
+# Build output and IDE files: generated on your computer, never committed.
+.gradle/
+build/
+/local.properties
+/.idea/
+*.iml
+.DS_Store
+/captures
+.externalNativeBuild
+.cxx
+# Signing keys must never be committed.
+*.jks
+*.keystore
