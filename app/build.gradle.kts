@@ -19,13 +19,34 @@ android {
         applicationId = "com.eversorm.weeklyschedule"
         minSdk = 26        // Android 8.0: oldest Android version the app runs on
         targetSdk = 37     // Android 17: the version the app is designed and tested for
-        versionCode = 1    // increase by 1 for every APK you install as an update
-        versionName = "0.1"
+        // Must grow with every update. On GitHub it is the build number (1, 2, 3, ...),
+        // so you never have to change it by hand.
+        val buildNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+        versionCode = buildNumber
+        versionName = "0.1.$buildNumber"
+    }
+
+    // The release key. It is never stored in the repository: GitHub passes it to the
+    // build through environment variables filled from the repository's secrets
+    // (see .github/workflows/build.yml).
+    val keystorePath = System.getenv("SIGNING_KEYSTORE_PATH")
+    signingConfigs {
+        if (keystorePath != null) {
+            create("release") {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+                keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (keystorePath != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     compileOptions {

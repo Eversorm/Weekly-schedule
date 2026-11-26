@@ -22,41 +22,43 @@ Coming next: Phase 2 notifications, Phase 3 home screen widget, Phase 4 skip & r
 
 ---
 
-## Build and install (Android Studio)
+## Build and install (no computer needed)
 
-### One-time setup
-1. Install **Android Studio** (free): https://developer.android.com/studio
-2. Open it and choose **File → New → Project from Version Control** (on the welcome screen: **Clone Repository**).
-   URL: `https://github.com/Eversorm/weekly-schedule` → **Clone**. Log in to GitHub if asked.
-3. Wait for the "Gradle sync" to finish (progress bar at the bottom; the first time it downloads a lot, several minutes).
-   If Android Studio asks to install a missing SDK platform (Android 17 / API 37.2), accept.
+GitHub builds the app on its own servers every time new code is pushed to `main`
+(see `.github/workflows/build.yml`). Each build becomes a **Release** with the APK attached.
 
-### Prepare your phone (once)
-1. **Settings → About phone →** tap **Build number** 7 times → "You are now a developer".
-2. **Settings → System → Developer options →** turn on **USB debugging**.
-   (Menu names vary a bit between phone brands; search "USB debugging" in Settings.)
-3. Connect the phone with a USB cable and accept the "Allow USB debugging?" prompt on the phone.
+### Install or update the app (on the phone)
+1. Open https://github.com/Eversorm/weekly-schedule/releases in the phone's browser (logged in to GitHub),
+   or in the GitHub app: repository → **Releases**.
+2. Open the newest **Build N** → under *Assets* tap `weekly-schedule-N.apk` to download it.
+3. Open the downloaded file. The first time, Android asks to allow installing apps from your browser:
+   allow it, go back, tap **Install** (or **Update**). Play Protect may warn about an unknown app: choose
+   **More details → Install anyway**.
 
-### Install / update
-- In Android Studio, select your phone in the device drop-down at the top, then press the green **▶ Run** button.
-  The app is built, installed and started. Later updates: pull the new code (**Git → Pull**) and press ▶ again — your data is kept.
+Updates install over the old version and keep your data, because every build is signed with the same key.
 
-**Alternative without cable:** **Build → Generate App Bundles or APKs → Generate APKs**. When finished, click "locate";
-the file is `app/build/outputs/apk/debug/app-debug.apk`. Copy it to the phone (e.g. Google Drive), open it and allow
-"Install unknown apps" for that app when asked.
+### Check a build
+Repository → **Actions** tab: a green ✓ means the build worked, a red ✗ that it failed (tap it to see why).
+To build again by hand: Actions → **Build APK** → **Run workflow**.
 
-### ⚠️ Important: the signing key
-Android only accepts an update if it is signed with the **same key** as the installed version. Otherwise you must
-uninstall first, which **deletes all data**. Android Studio signs debug builds with a key stored on your computer:
+### ⚠️ The signing key
+The key is stored in the repository's secrets (Settings → Secrets and variables → Actions):
+`SIGNING_KEYSTORE_BASE64`, `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`.
+GitHub never shows secrets again after saving them, so **keep your own copy** of the key file
+(`weekly-schedule-release.jks`) and its password somewhere safe (e.g. Google Drive / a password manager).
+If the key is lost, the next version cannot update the installed app: you would have to export a backup,
+uninstall, install, and import.
 
-- Windows: `C:\Users\<you>\.android\debug.keystore`
-- macOS/Linux: `~/.android/debug.keystore`
+**Before any uninstall: export a backup in the app (Settings → Export).**
 
-Keep building from the same computer, and copy that file somewhere safe. If you ever change computer, copy it back
-to the same place. And in any case: **export a backup in the app before any uninstall.**
+### Optional: Android Studio on a computer
+Useful only for debugging crashes (the *Logcat* panel shows the exact error).
+**File → New → Project from Version Control** → `https://github.com/Eversorm/weekly-schedule`.
+Builds made there are signed with a different (debug) key, so they cannot update the GitHub version:
+uninstall first (after exporting a backup).
 
 ### Run the unit tests
-In Android Studio, open `app/src/test/...`, right-click the `domain` folder → **Run 'Tests in domain'**.
+They run automatically in every GitHub build. In Android Studio: right-click `app/src/test/.../domain` → **Run**.
 
 ---
 
@@ -90,4 +92,5 @@ app/src/main/AndroidManifest.xml   app components and permissions
 app/src/main/res/                  icon, app name, window theme
 app/schemas/                       database structure history (needed for future migrations — keep it)
 gradle/libs.versions.toml          all library versions in one place
+.github/workflows/build.yml        GitHub build: tests, signed APK, Release
 ```
