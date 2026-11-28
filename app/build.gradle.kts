@@ -29,14 +29,16 @@ android {
     // The release key. It is never stored in the repository: GitHub passes it to the
     // build through environment variables filled from the repository's secrets
     // (see .github/workflows/build.yml).
-    val keystorePath = System.getenv("SIGNING_KEYSTORE_PATH")
+    // .trim() removes spaces/line breaks accidentally copied together with a secret.
+    fun secret(name: String): String? = System.getenv(name)?.trim()
+    val keystorePath = secret("SIGNING_KEYSTORE_PATH")
     signingConfigs {
         if (keystorePath != null) {
             create("release") {
                 storeFile = file(keystorePath)
-                storePassword = System.getenv("SIGNING_STORE_PASSWORD")
-                keyAlias = System.getenv("SIGNING_KEY_ALIAS")
-                keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+                storePassword = secret("SIGNING_STORE_PASSWORD")
+                keyAlias = secret("SIGNING_KEY_ALIAS")
+                keyPassword = secret("SIGNING_KEY_PASSWORD")
             }
         }
     }
